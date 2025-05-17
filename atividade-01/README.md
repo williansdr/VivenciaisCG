@@ -74,4 +74,4 @@ Certifique-se de ter as seguintes bibliotecas instaladas:
 entities.emplace_back(0.0f, 0.0f, 0.0f, glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, "path/to/model1.obj");
 entities.emplace_back(0.5f, 0.0f, 0.5f, glm::vec3(0.0f, 0.0f, 1.0f), 0.5f, "path/to/model2.obj");
 ```
-![alt text](./atividade-01/assets/imgs/image.png)
+![alt text](assets/imgs/image.png)
