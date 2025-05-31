@@ -1,4 +1,4 @@
-# Vivencial 3D
+# Vivencial 2
 
 ## Visão Geral
 
@@ -86,4 +86,4 @@ entities.emplace_back(0.0f, 0.0f, 0.0f, glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, "path
 entities.emplace_back(0.5f, 0.0f, 0.5f, glm::vec3(0.0f, 0.0f, 1.0f), 0.5f, "path/to/model2.obj");
 ```
 
-![alt text](assets/imgs/image.png)
+![alt text](images/image2.png)

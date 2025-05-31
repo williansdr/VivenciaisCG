@@ -38,7 +38,7 @@ int main()
     entities.emplace_back(
         0.0f, 0.0f, 0.0f,
         glm::vec3(0.0f, 0.0f, 1.0f),
-        0.3f,
+        0.5f,
         "../assets/Modelos3D/Suzanne.obj",
         "../assets/Modelos3D/Suzanne.mtl",
         "../assets/Modelos3D/Suzanne.png",
