@@ -92,11 +92,11 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             selectedEntity.toggleRotateZ();
         }
-        if (key == GLFW_KEY_I)
+        if (key == GLFW_KEY_RIGHT_BRACKET)
         {
             selectedEntity.scaleUp();
         }
-        if (key == GLFW_KEY_O)
+        if (key == GLFW_KEY_LEFT_BRACKET)
         {
             selectedEntity.scaleDown();
         }
@@ -129,7 +129,6 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
             selectedEntityIndex = (selectedEntityIndex + 1) % entities.size();
         }
 
-        // Light toggle
         if (key == GLFW_KEY_1)
         {
             selectedEntity.toggleKeyLight();

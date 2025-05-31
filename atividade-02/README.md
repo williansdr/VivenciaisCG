@@ -1,17 +1,15 @@
-
-# Vivencial 1
+# Vivencial 3D
 
 ## Visão Geral
 
-Este projeto demonstra como criar e gerenciar múltiplas entidades 3D em um contexto OpenGL. Cada entidade pode ser controlada individualmente, permitindo transformações como escala e rotação. O código utiliza GLFW para criação de janelas e GLAD para carregar funções OpenGL. GLM é usado para operações matemáticas envolvendo matrizes e vetores.
+Este projeto demonstra como criar e gerenciar múltiplas entidades 3D em um contexto OpenGL. Cada entidade pode ser controlada individualmente, permitindo transformações como escala e rotação, além de controle de iluminação. O código utiliza GLFW para criação de janelas e GLAD para carregar funções OpenGL. GLM é usado para operações matemáticas envolvendo matrizes e vetores.
 
 ## Funcionalidades
 
 - **Gerenciamento de Múltiplas Entidades:** Suporta a instanciação e renderização de múltiplas entidades 3D dentro de uma única cena.
-
 - **Transformações Independentes:** Cada entidade pode ter suas próprias propriedades de escala, rotação e cor.
-
-- **Controles Interativos:** Use entradas do teclado para manipular atributos da entidade selecionada, como escala, rotação e alternância de seleção.
+- **Iluminação Avançada:** Implementação de três fontes de luz — Key Light (luz principal), Fill Light (luz de preenchimento) e Back Light (luz de fundo) — com possibilidade de ativação/desativação individual.
+- **Controles Interativos:** Use entradas do teclado para manipular atributos da entidade selecionada, como escala, rotação, seleção e estados de luz.
 
 ## Dependências
 
@@ -24,9 +22,10 @@ Este projeto demonstra como criar e gerenciar múltiplas entidades 3D em um cont
 ### Pré-requisitos
 
 Certifique-se de ter as seguintes bibliotecas instaladas:
-- GLFW
-- GLAD
-- GLM
+
+- GLFW  
+- GLAD  
+- GLM  
 
 ### Instruções de Compilação
 
@@ -36,10 +35,12 @@ Certifique-se de ter as seguintes bibliotecas instaladas:
    cd <nome_do_repositorio>
    ```
 
-2. **Setup do Projeto**
+2. **Configuração do Projeto**
+
+   Consulte o guia de início disponível aqui:  
    👉 [Getting Started - CGCCHibrido](https://github.com/fellowsheep/CGCCHibrido/blob/main/GettingStarted.md)
 
-3. **Execute o Executável**
+3. **Execução do Programa**
    ```sh
    ./OpenGLDemo
    ```
@@ -48,30 +49,41 @@ Certifique-se de ter as seguintes bibliotecas instaladas:
 
 ### Controles de Teclado
 
-- **Transformações:**
-  - Tecla `[`: Diminui a escala da entidade selecionada.
-  - Tecla `]`: Aumenta a escala da entidade selecionada.
-  - Tecla `X`: Alterna rotação ao redor do eixo X para a entidade selecionada.
-  - Tecla `Y`: Alterna rotação ao redor do eixo Y para a entidade selecionada.
-  - Tecla `Z`: Alterna rotação ao redor do eixo Z para a entidade selecionada.
+#### Transformações
 
-- **Seleção de Entidade:**
-  - Tecla `A`: Seleciona a entidade anterior.
-  - Tecla `D`: Seleciona a próxima entidade.
+- Tecla `[` : Diminui a escala da entidade selecionada.  
+- Tecla `]` : Aumenta a escala da entidade selecionada.  
+- Tecla `X` : Alterna rotação ao redor do eixo X para a entidade selecionada.  
+- Tecla `Y` : Alterna rotação ao redor do eixo Y para a entidade selecionada.  
+- Tecla `Z` : Alterna rotação ao redor do eixo Z para a entidade selecionada.  
 
-- **Gerenciamento de Janela:**
-  - Tecla `Esc`: Fecha a janela e termina o programa.
+#### Controle de Iluminação
 
-### Configuração
+- Tecla `1` : Ativa/desativa a **Key Light**.  
+- Tecla `2` : Ativa/desativa a **Fill Light**.  
+- Tecla `3` : Ativa/desativa a **Back Light**.  
 
-- **Propriedades da Entidade:**
-  - As entidades são definidas com posição, cor, escala e caminho para um arquivo de modelo OBJ.
-  - A cor e a escala inicial são especificadas durante a instanciação da entidade no código.
+#### Seleção de Entidade
 
-## Exemplo de Configuração
+- Tecla `A` : Seleciona a entidade anterior.  
+- Tecla `D` : Seleciona a próxima entidade.  
+
+#### Gerenciamento de Janela
+
+- Tecla `Esc` : Fecha a janela e termina o programa.  
+
+## Configuração
+
+### Propriedades da Entidade
+
+As entidades são definidas com posição, cor, escala e caminho para um arquivo de modelo `.obj`.  
+A cor e a escala inicial são especificadas durante a instanciação da entidade no código.
+
+### Exemplo de Configuração
 
 ```cpp
 entities.emplace_back(0.0f, 0.0f, 0.0f, glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, "path/to/model1.obj");
 entities.emplace_back(0.5f, 0.0f, 0.5f, glm::vec3(0.0f, 0.0f, 1.0f), 0.5f, "path/to/model2.obj");
 ```
+
 ![alt text](assets/imgs/image.png)

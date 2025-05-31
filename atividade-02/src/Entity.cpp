@@ -1,4 +1,3 @@
-// Entity.cpp modificado com suporte à iluminação Phong
 #include "Entity.h"
 #include <iostream>
 #include <fstream>
@@ -199,7 +198,6 @@ void Entity::setupShaders()
                 
                 float diff = max(dot(norm, lightDir), 0.0);
                 
-                // Apply attenuation to diffuse lighting
                 vec3 diffuse = kd[i] * diff * lightColor[i] * attenuation;
 
                 vec3 viewDir = normalize(camPos - FragPos);
