@@ -177,7 +177,11 @@ void Entity::setupShaders()
     uniform float kd[3];
     uniform float ks;
     uniform float q;
-    uniform bool lightEnabled[3]; // bool array indicating if each light is enabled
+    uniform bool lightEnabled[3];
+
+    uniform float constantAttenuation;
+    uniform float linearAttenuation;
+    uniform float quadraticAttenuation;
 
     void main() {
         vec3 color = texture(texture1, TexCoord).rgb;
@@ -187,15 +191,21 @@ void Entity::setupShaders()
         vec3 result = ambient * color;
 
         for (int i = 0; i < 3; ++i) {
-            if (lightEnabled[i]) { // Check if the current light is enabled
+            if (lightEnabled[i]) {
                 vec3 lightDir = normalize(lightPos[i] - FragPos);
-                float diff = max(dot(norm, lightDir), 0.0);
-                vec3 diffuse = kd[i] * diff * lightColor[i];
+                float distance = length(lightPos[i] - FragPos);
                 
+                float attenuation = 1.0 / (constantAttenuation + linearAttenuation * distance + quadraticAttenuation * (distance * distance));
+                
+                float diff = max(dot(norm, lightDir), 0.0);
+                
+                // Apply attenuation to diffuse lighting
+                vec3 diffuse = kd[i] * diff * lightColor[i] * attenuation;
+
                 vec3 viewDir = normalize(camPos - FragPos);
                 vec3 reflectDir = reflect(-lightDir, norm);
                 float spec = pow(max(dot(viewDir, reflectDir), 0.0), q);
-                vec3 specular = ks * spec * lightColor[i];
+                vec3 specular = ks * spec * lightColor[i] * attenuation;
 
                 result += (diffuse + specular) * color;
             }
@@ -275,6 +285,11 @@ void Entity::draw() {
     glUniform1f(glGetUniformLocation(shaderProgram, "ks"), 0.5f);
     glUniform1f(glGetUniformLocation(shaderProgram, "q"), 32.0f);
     glUniform3f(glGetUniformLocation(shaderProgram, "camPos"), 0.0f, 0.0f, 3.0f);
+
+    // Atenuation parameters
+    glUniform1f(glGetUniformLocation(shaderProgram, "constantAttenuation"), 1.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "linearAttenuation"), 0.09f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "quadraticAttenuation"), 0.032f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
