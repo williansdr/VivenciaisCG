@@ -128,5 +128,19 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         {
             selectedEntityIndex = (selectedEntityIndex + 1) % entities.size();
         }
+
+        // Light toggle
+        if (key == GLFW_KEY_1)
+        {
+            selectedEntity.toggleKeyLight();
+        }
+        if (key == GLFW_KEY_2)
+        {
+            selectedEntity.toggleFillLight();
+        }
+        if (key == GLFW_KEY_3)
+        {
+            selectedEntity.toggleBackLight();
+        }
     }
 }

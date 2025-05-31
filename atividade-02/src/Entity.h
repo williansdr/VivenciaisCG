@@ -30,6 +30,13 @@ public:
     void moveForward();
     void moveBackward();
 
+
+    void toggleKeyLight();
+
+    void toggleFillLight();
+
+    void toggleBackLight();
+
 private:
     glm::vec3 position;
     glm::vec3 baseColor;
@@ -59,6 +66,7 @@ private:
 
     void setupShaders();
     void checkCompileErrors(GLuint shader, std::string type);
+
 
     static constexpr float TRANSLATION_SPEED = 0.1f;
 };

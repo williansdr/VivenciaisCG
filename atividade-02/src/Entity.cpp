@@ -27,6 +27,9 @@ Entity::Entity(float x, float y, float z,
       initialRotation(initialRotation)
 {
 }
+bool isKeyLightEnabled = true;
+bool isFillLightEnabled = true;
+bool isBackLightEnabled = true;
 
 void Entity::initialize()
 {
@@ -159,37 +162,48 @@ void Entity::setupShaders()
     )glsl";
 
     const GLchar *fragmentShaderSource = R"glsl(
-        #version 410 core
-        in vec2 TexCoord;
-        in vec3 FragPos;
-        in vec3 Normal;
+    #version 410 core
+    in vec2 TexCoord;
+    in vec3 FragPos;
+    in vec3 Normal;
 
-        out vec4 FragColor;
+    out vec4 FragColor;
 
-        uniform sampler2D texture1;
-        uniform vec3 lightPos;
-        uniform vec3 camPos;
-        uniform float ka;
-        uniform float kd;
-        uniform float ks;
-        uniform float q;
+    uniform sampler2D texture1;
+    uniform vec3 lightPos[3];
+    uniform vec3 lightColor[3];
+    uniform vec3 camPos;
+    uniform float ka;
+    uniform float kd[3];
+    uniform float ks;
+    uniform float q;
+    uniform bool lightEnabled[3]; // bool array indicating if each light is enabled
 
-        void main() {
-            vec3 color = texture(texture1, TexCoord).rgb;
-            vec3 norm = normalize(Normal);
-            vec3 lightColor = vec3(1.0);
-            vec3 ambient = ka * lightColor;
-            vec3 lightDir = normalize(lightPos - FragPos);
-            float diff = max(dot(norm, lightDir), 0.0);
-            vec3 diffuse = kd * diff * lightColor;
-            vec3 viewDir = normalize(camPos - FragPos);
-            vec3 reflectDir = reflect(-lightDir, norm);
-            float spec = pow(max(dot(viewDir, reflectDir), 0.0), q);
-            vec3 specular = ks * spec * lightColor;
-            vec3 result = (ambient + diffuse) * color + specular;
-            FragColor = vec4(result, 1.0);
+    void main() {
+        vec3 color = texture(texture1, TexCoord).rgb;
+        vec3 norm = normalize(Normal);
+        vec3 ambient = ka * vec3(1.0);
+
+        vec3 result = ambient * color;
+
+        for (int i = 0; i < 3; ++i) {
+            if (lightEnabled[i]) { // Check if the current light is enabled
+                vec3 lightDir = normalize(lightPos[i] - FragPos);
+                float diff = max(dot(norm, lightDir), 0.0);
+                vec3 diffuse = kd[i] * diff * lightColor[i];
+                
+                vec3 viewDir = normalize(camPos - FragPos);
+                vec3 reflectDir = reflect(-lightDir, norm);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), q);
+                vec3 specular = ks * spec * lightColor[i];
+
+                result += (diffuse + specular) * color;
+            }
         }
-    )glsl";
+
+        FragColor = vec4(result, 1.0);
+    }
+)glsl";
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -211,8 +225,7 @@ void Entity::setupShaders()
     glDeleteShader(fragmentShader);
 }
 
-void Entity::draw()
-{
+void Entity::draw() {
     glUseProgram(shaderProgram);
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -234,12 +247,34 @@ void Entity::draw()
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-    glUniform3f(glGetUniformLocation(shaderProgram, "lightPos"), 1.0f, 1.2f, -0.5f);
-    glUniform3f(glGetUniformLocation(shaderProgram, "camPos"), 0.0f, 0.0f, 3.0f);
+    glm::vec3 lightPositions[] = {
+        glm::vec3(1.0f, 1.2f, -0.5f),  // Key Light
+        glm::vec3(-1.0f, 0.5f, 1.0f), // Fill Light
+        glm::vec3(0.0f, -1.2f, -1.5f) // Back Light
+    };
+
+    glm::vec3 lightColors[] = {
+        glm::vec3(1.0f, 1.0f, 1.0f),
+        glm::vec3(0.4f, 0.4f, 0.4f),
+        glm::vec3(0.3f, 0.3f, 0.3f)
+    };
+
+    bool lightEnabled[] = {
+        isKeyLightEnabled,
+        isFillLightEnabled,
+        isBackLightEnabled
+    };
+
+    glUniform3fv(glGetUniformLocation(shaderProgram, "lightPos"), 3, glm::value_ptr(lightPositions[0]));
+    glUniform3fv(glGetUniformLocation(shaderProgram, "lightColor"), 3, glm::value_ptr(lightColors[0]));
+    glUniform1i(glGetUniformLocation(shaderProgram, "lightEnabled[0]"), lightEnabled[0]);
+    glUniform1i(glGetUniformLocation(shaderProgram, "lightEnabled[1]"), lightEnabled[1]);
+    glUniform1i(glGetUniformLocation(shaderProgram, "lightEnabled[2]"), lightEnabled[2]);
     glUniform1f(glGetUniformLocation(shaderProgram, "ka"), 0.1f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "kd"), 0.5f);
+    glUniform1fv(glGetUniformLocation(shaderProgram, "kd"), 3, (float[]){0.8f, 0.5f, 0.3f});
     glUniform1f(glGetUniformLocation(shaderProgram, "ks"), 0.5f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "q"), 10.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "q"), 32.0f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "camPos"), 0.0f, 0.0f, 3.0f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
@@ -310,6 +345,17 @@ void Entity::checkCompileErrors(GLuint shader, std::string type)
     }
 }
 
+void Entity::toggleKeyLight() {
+    isKeyLightEnabled = !isKeyLightEnabled;
+}
+
+void Entity::toggleFillLight() {
+    isFillLightEnabled = !isFillLightEnabled;
+}
+
+void Entity::toggleBackLight() {
+    isBackLightEnabled = !isBackLightEnabled;
+}
 
 void Entity::toggleRotateX() {
     rotateX = !rotateX;
